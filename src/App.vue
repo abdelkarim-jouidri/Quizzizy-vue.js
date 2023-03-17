@@ -23,14 +23,23 @@ function getQuestionById(id){
   return questions.value.filter((qst)=>qst.id===id)
 }
 
-async function checkAnswer(question){
+function checkAnswer(id,ans){
+   
+  fetch('http://localhost:3001/data')
+  .then(res=>res.json())
+  .then(data=>{
+    const [answer] = data.filter((ans)=>ans.id===id)
+    if(answer.answer===ans) score.value++
+  })
+  
   
 }
 
 function handle(ans, id){
-  const [question] = getQuestionById(id);
-  checkAnswer(question);
-  if(currentQuestion.value<questions.value.length) currentQuestion.value++
+  if(currentQuestion.value<questions.value.length) {
+    checkAnswer(id,ans);
+    currentQuestion.value++
+  }
 }
 
 </script>
@@ -40,6 +49,7 @@ function handle(ans, id){
   <div class="mx-auto max-w-7xl py-24 sm:px-6 sm:py-32 lg:px-8">
     <div class="relative isolate overflow-hidden bg-gray-900 px-6 pt-16 shadow-2xl sm:rounded sm:px-16 md:pt-24 lg:flex lg:gap-x-20 lg:px-24 lg:pt-0 flex justify-center">
       <div class="mx-auto text-center lg:mx-0 lg:flex-auto text-white lg:py-32 lg:text-left grid col-1 gap-8">
+        score : {{ score }}
           <Question 
             :question="singleQuestion"
             @go-to-next-question = "handle"
