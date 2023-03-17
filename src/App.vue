@@ -3,11 +3,13 @@ import Question from './components/Question.vue';
 import {ref , onBeforeMount, computed} from 'vue';
 let questions = ref([])
 let currentQuestion = ref(1)
+let score = ref(0)
 
 onBeforeMount(()=>{
   console.log('from onbeforemount')
   fetch('http://localhost:3000/data').then(res=>res.json()).then(data=>{
     questions.value = data    
+    console.log(data)
   })
 })
 
@@ -17,6 +19,20 @@ let singleQuestion = computed(()=> {
   return result
 })
 
+function getQuestionById(id){
+  return questions.value.filter((qst)=>qst.id===id)
+}
+
+async function checkAnswer(question){
+  
+}
+
+function handle(ans, id){
+  const [question] = getQuestionById(id);
+  checkAnswer(question);
+  if(currentQuestion.value<questions.value.length) currentQuestion.value++
+}
+
 </script>
 
 <template>
@@ -25,8 +41,8 @@ let singleQuestion = computed(()=> {
     <div class="relative isolate overflow-hidden bg-gray-900 px-6 pt-16 shadow-2xl sm:rounded sm:px-16 md:pt-24 lg:flex lg:gap-x-20 lg:px-24 lg:pt-0 flex justify-center">
       <div class="mx-auto text-center lg:mx-0 lg:flex-auto text-white lg:py-32 lg:text-left grid col-1 gap-8">
           <Question 
-            :question="singleQuestion.question"
-            :answers="singleQuestion.answers"
+            :question="singleQuestion"
+            @go-to-next-question = "handle"
             >
           </Question>
       </div>
